@@ -13,6 +13,9 @@ class PopupPanel: NSPanel {
     /// Callback invoked when the user selects an entry to paste.
     var onPaste: ((ClipboardEntry) -> Void)?
 
+    /// The view model shared with PopupView for providing entries.
+    let viewModel = PopupViewModel()
+
     /// Creates a new PopupPanel configured as a floating, non-activating panel.
     /// Hosts a PopupView as the root SwiftUI content.
     init() {
@@ -32,6 +35,7 @@ class PopupPanel: NSPanel {
     /// Installs the PopupView as the panel's content using NSHostingView.
     private func installPopupView() {
         let popupView = PopupView(
+            viewModel: viewModel,
             onPaste: { [weak self] entry in
                 self?.onPaste?(entry)
             },
@@ -102,6 +106,9 @@ class PopupPanel: NSPanel {
     func showNearCursor() {
         // Store the previously active application before showing the panel
         previousApp = NSWorkspace.shared.frontmostApplication
+
+        // Load current entries from the history store
+        viewModel.loadEntries()
 
         let cursorPosition = NSEvent.mouseLocation
         let panelSize = frame.size

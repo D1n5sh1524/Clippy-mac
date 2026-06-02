@@ -72,6 +72,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let popupPanel = PopupPanel()
         self.popupPanel = popupPanel
 
+        // Configure the popup's view model with the history store
+        popupPanel.viewModel.configure(historyStore: historyStore)
+
         // 6. Initialize PasteEngine
         let pasteEngine = PasteEngine()
         self.pasteEngine = pasteEngine

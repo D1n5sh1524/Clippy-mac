@@ -13,8 +13,8 @@ struct PopupView: View {
     /// The index of the currently highlighted entry (keyboard navigation).
     @State private var highlightedIndex: Int? = nil
 
-    /// The full list of clipboard entries (most recent first).
-    @State private var entries: [ClipboardEntry] = []
+    /// View model providing entries from the HistoryStore.
+    @ObservedObject var viewModel: PopupViewModel
 
     // MARK: - Callbacks
 
@@ -31,9 +31,9 @@ struct PopupView: View {
     /// When non-empty, returns only text entries containing the query (case-insensitive).
     private var filteredEntries: [ClipboardEntry] {
         guard !searchQuery.isEmpty else {
-            return entries
+            return viewModel.entries
         }
-        return entries.filter { entry in
+        return viewModel.entries.filter { entry in
             switch entry.content {
             case .text(let text):
                 return text.localizedCaseInsensitiveContains(searchQuery)
@@ -187,12 +187,4 @@ struct PopupView: View {
         onPaste(filteredEntries[index])
     }
 
-    // MARK: - Public Methods
-
-    /// Updates the entries displayed in the popup.
-    /// Called by the panel when showing or when entries change.
-    mutating func updateEntries(_ newEntries: [ClipboardEntry]) {
-        entries = newEntries
-        highlightedIndex = nil
-    }
 }
