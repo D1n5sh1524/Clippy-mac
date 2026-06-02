@@ -55,7 +55,7 @@ struct PopupView: View {
                 searchArea
 
                 // Clear All button
-                if !viewModel.entries.isEmpty {
+                if !viewModel.entries.isEmpty && !viewModel.showClearConfirmation {
                     Button(action: {
                         viewModel.showClearConfirmation = true
                     }) {
@@ -67,6 +67,33 @@ struct PopupView: View {
                     .help("Clear all history")
                     .padding(.trailing, 8)
                 }
+            }
+
+            // Inline clear confirmation bar
+            if viewModel.showClearConfirmation {
+                HStack(spacing: 12) {
+                    Text("Clear all history?")
+                        .font(.system(size: 12))
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Button("Cancel") {
+                        viewModel.showClearConfirmation = false
+                    }
+                    .buttonStyle(.plain)
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+
+                    Button("Clear All") {
+                        viewModel.clearAll()
+                        viewModel.showClearConfirmation = false
+                    }
+                    .buttonStyle(.plain)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.red)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.red.opacity(0.08))
             }
 
             // Divider between search and list
@@ -82,14 +109,6 @@ struct PopupView: View {
                 .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 4)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .alert("Clear All History", isPresented: $viewModel.showClearConfirmation) {
-            Button("Cancel", role: .cancel) {}
-            Button("Clear All", role: .destructive) {
-                viewModel.clearAll()
-            }
-        } message: {
-            Text("Are you sure you want to clear all clipboard history? This cannot be undone.")
-        }
         .onKeyPress(.escape) {
             handleEscape()
             return .handled
