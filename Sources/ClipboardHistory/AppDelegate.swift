@@ -1,4 +1,5 @@
 import AppKit
+import ApplicationServices
 
 /// AppDelegate provides AppKit integration for the SwiftUI app lifecycle.
 /// Handles application lifecycle events and coordinates core services.
@@ -36,6 +37,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Application Lifecycle
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Request Accessibility permission (required for CGEvent paste simulation).
+        // This prompts the user on first launch if not already granted.
+        requestAccessibilityPermission()
+
         // 1. Initialize HistoryStore and load persisted entries
         let historyStore = HistoryStore()
         self.historyStore = historyStore
@@ -85,8 +90,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let targetApp = popupPanel.previousApp
             popupPanel.dismiss()
 
-            // Small delay to let the target app regain focus before simulating Cmd+V
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            // Activate the target app, then simulate Cmd+V after it gains focus
+            if let app = targetApp, !app.isTerminated {
+                app.activate()
+            }
+
+            // Delay to ensure the target app has focus before simulating paste
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 self.pasteEngine?.paste(entry: entry, targetApp: targetApp)
             }
 
@@ -135,5 +145,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Wait up to 2 seconds for persistence to complete.
         // If it times out, the previously persisted state remains intact (Req 6.5).
         _ = semaphore.wait(timeout: .now() + 2.0)
+    }
+
+    // MARK: - Accessibility
+
+    /// Checks and requests Accessibility permission.
+    /// If not granted, macOS will show the system dialog prompting the user
+    /// to enable it in System Settings → Privacy & Security → Accessibility.
+    private func requestAccessibilityPermission() {
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+        let trusted = AXIsProcessTrustedWithOptions(options)
+        if !trusted {
+            print("Accessibility permission not granted. Paste simulation (Cmd+V) will not work until permission is enabled.")
+        }
     }
 }
