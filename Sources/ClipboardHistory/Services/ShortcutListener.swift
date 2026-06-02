@@ -2,6 +2,15 @@ import Carbon
 import Foundation
 import UserNotifications
 
+// Global signature used by the Carbon hot key handler to avoid touching @MainActor types
+private let HOT_KEY_SIGNATURE: FourCharCode = {
+    let c: UInt32 = UInt32(UnicodeScalar("C").value) << 24
+        | UInt32(UnicodeScalar("L").value) << 16
+        | UInt32(UnicodeScalar("I").value) << 8
+        | UInt32(UnicodeScalar("P").value)
+    return FourCharCode(c)
+}()
+
 /// Error types for shortcut registration failures.
 enum ShortcutError: Error, LocalizedError {
     case registrationFailed(KeyboardShortcut)
@@ -48,13 +57,7 @@ class ShortcutListener {
     private var eventHandlerRef: EventHandlerRef?
 
     /// Signature used to identify this application's hot keys (FourCharCode 'CLIP').
-    static let hotKeySignature: FourCharCode = {
-        let c: UInt32 = UInt32(UnicodeScalar("C").value) << 24
-            | UInt32(UnicodeScalar("L").value) << 16
-            | UInt32(UnicodeScalar("I").value) << 8
-            | UInt32(UnicodeScalar("P").value)
-        return FourCharCode(c)
-    }()
+    static let hotKeySignature: FourCharCode = HOT_KEY_SIGNATURE
 
     /// Hot key ID counter for unique identification.
     private static let hotKeyID: UInt32 = 1
@@ -70,10 +73,13 @@ class ShortcutListener {
     }
 
     deinit {
-        unregister()
-        removeEventHandler()
-        if Self.shared === self {
-            Self.shared = nil
+        // deinit is nonisolated; dispatch cleanup to the main actor to satisfy isolation
+        Task { @MainActor in
+            self.unregister()
+            self.removeEventHandler()
+            if Self.shared === self {
+                Self.shared = nil
+            }
         }
     }
 
@@ -277,7 +283,7 @@ private func hotKeyEventHandler(
     }
 
     // Verify the hot key belongs to us
-    guard hotKeyID.signature == ShortcutListener.hotKeySignature else {
+    guard hotKeyID.signature == HOT_KEY_SIGNATURE else {
         return OSStatus(eventNotHandledErr)
     }
 

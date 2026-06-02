@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "ClipboardHistory",
     platforms: [
-        .macOS(.v13)
+        .macOS(.v14)
     ],
     products: [
         .executable(
@@ -21,8 +21,8 @@ let package = Package(
             name: "ClipboardHistory",
             dependencies: [],
             path: "Sources/ClipboardHistory",
-            resources: [
-                .process("Resources")
+            exclude : [
+                "Resources/Info.plist"
             ]
         ),
         .testTarget(
@@ -35,3 +35,4 @@ let package = Package(
         )
     ]
 )
+
