@@ -19,6 +19,9 @@ struct EntryRowView: View {
     /// Callback when the copy button is tapped.
     var onCopy: (() -> Void)? = nil
 
+    /// Tracks whether the copy action was just performed (shows tick icon).
+    @State private var justCopied: Bool = false
+
     // MARK: - Body
 
     var body: some View {
@@ -31,16 +34,21 @@ struct EntryRowView: View {
 
             Spacer()
 
-            // Copy button
+            // Copy button — shows tick briefly after copying
             Button(action: {
                 onCopy?()
+                justCopied = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    justCopied = false
+                }
             }) {
-                Image(systemName: "doc.on.doc")
-                    .foregroundColor(.secondary)
+                Image(systemName: justCopied ? "checkmark" : "doc.on.doc")
+                    .foregroundColor(justCopied ? .green : .secondary)
                     .font(.system(size: 11))
             }
             .buttonStyle(.plain)
             .help("Copy to clipboard")
+            .animation(.easeInOut(duration: 0.2), value: justCopied)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
