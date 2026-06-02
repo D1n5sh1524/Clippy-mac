@@ -72,6 +72,9 @@ class PopupPanel: NSPanel {
         // without activating the application
         becomesKeyOnlyIfNeeded = true
 
+        // Allow dragging the panel by its background
+        isMovableByWindowBackground = true
+
         // Remove the panel from the window cycle (Cmd+` won't switch to it)
         isExcludedFromWindowsMenu = true
 
