@@ -84,7 +84,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             guard let self = self else { return }
             let targetApp = popupPanel.previousApp
             popupPanel.dismiss()
-            self.pasteEngine?.paste(entry: entry, targetApp: targetApp)
+
+            // Small delay to let the target app regain focus before simulating Cmd+V
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                self.pasteEngine?.paste(entry: entry, targetApp: targetApp)
+            }
 
             // Move pasted entry to top
             Task {
