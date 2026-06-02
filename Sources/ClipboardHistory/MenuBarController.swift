@@ -34,7 +34,7 @@ class MenuBarController {
         if let button = statusItem?.button {
             button.image = NSImage(
                 systemSymbolName: "doc.on.clipboard",
-                accessibilityDescription: "Clipboard History"
+                accessibilityDescription: "Clippy"
             )
         }
 
@@ -77,7 +77,7 @@ class MenuBarController {
 
         // Quit item
         let quitItem = NSMenuItem(
-            title: "Quit Clipboard History",
+            title: "Quit Clippy",
             action: #selector(quitAction(_:)),
             keyEquivalent: "q"
         )

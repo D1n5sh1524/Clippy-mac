@@ -3,13 +3,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "ClipboardHistory",
+    name: "Clippy",
     platforms: [
         .macOS(.v14)
     ],
     products: [
         .executable(
-            name: "ClipboardHistory",
+            name: "Clippy",
             targets: ["ClipboardHistory"]
         )
     ],

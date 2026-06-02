@@ -157,7 +157,7 @@ actor HistoryStore {
     private func postCorruptionNotification() {
         let center = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
-        content.title = "Clipboard History"
+        content.title = "Clippy"
         content.body = "Previous clipboard history could not be recovered. The corrupted file has been preserved for manual recovery."
         content.sound = .default
 
