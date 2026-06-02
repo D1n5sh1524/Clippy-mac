@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 
 /// A SwiftUI view that displays a single clipboard entry row in the popup list.
-/// Shows content type icon, text preview or image thumbnail, and relative timestamp.
+/// Shows content type icon, text preview or image thumbnail, and a copy button.
 struct EntryRowView: View {
 
     // MARK: - Properties
@@ -41,9 +41,6 @@ struct EntryRowView: View {
             }
             .buttonStyle(.plain)
             .help("Copy to clipboard")
-
-            // Relative timestamp
-            timestampLabel
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -81,13 +78,6 @@ struct EntryRowView: View {
         case .image(let data):
             imageThumbnail(data: data)
         }
-    }
-
-    /// Relative timestamp label displayed on the right side of the row.
-    private var timestampLabel: some View {
-        Text(RelativeTimestampFormatter().format(entry.timestamp))
-            .font(.system(size: 11))
-            .foregroundColor(.secondary)
     }
 
     /// Creates a thumbnail image view scaled to fit within 64x64 pixels preserving aspect ratio.
