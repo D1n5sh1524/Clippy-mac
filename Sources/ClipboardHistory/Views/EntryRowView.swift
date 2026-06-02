@@ -16,6 +16,9 @@ struct EntryRowView: View {
     /// Callback when the row is tapped.
     let onTap: () -> Void
 
+    /// Callback when the copy button is tapped.
+    var onCopy: (() -> Void)? = nil
+
     // MARK: - Body
 
     var body: some View {
@@ -27,6 +30,17 @@ struct EntryRowView: View {
             contentPreview
 
             Spacer()
+
+            // Copy button
+            Button(action: {
+                onCopy?()
+            }) {
+                Image(systemName: "doc.on.doc")
+                    .foregroundColor(.secondary)
+                    .font(.system(size: 11))
+            }
+            .buttonStyle(.plain)
+            .help("Copy to clipboard")
 
             // Relative timestamp
             timestampLabel

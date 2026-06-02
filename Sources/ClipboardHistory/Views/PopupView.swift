@@ -24,6 +24,9 @@ struct PopupView: View {
     /// Called when the popup should be dismissed.
     var onDismiss: () -> Void
 
+    /// Called when the user copies an entry to clipboard (without pasting).
+    var onCopy: ((ClipboardEntry) -> Void)?
+
     // MARK: - Computed Properties
 
     /// Entries filtered by the current search query.
@@ -47,8 +50,24 @@ struct PopupView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Search area (placeholder for SearchView - task 9.6)
-            searchArea
+            // Search area and Clear All button
+            HStack {
+                searchArea
+
+                // Clear All button
+                if !viewModel.entries.isEmpty {
+                    Button(action: {
+                        viewModel.showClearConfirmation = true
+                    }) {
+                        Image(systemName: "trash")
+                            .foregroundColor(.secondary)
+                            .font(.system(size: 12))
+                    }
+                    .buttonStyle(.plain)
+                    .help("Clear all history")
+                    .padding(.trailing, 8)
+                }
+            }
 
             // Divider between search and list
             Divider()
@@ -63,6 +82,14 @@ struct PopupView: View {
                 .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 4)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .alert("Clear All History", isPresented: $viewModel.showClearConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Clear All", role: .destructive) {
+                viewModel.clearAll()
+            }
+        } message: {
+            Text("Are you sure you want to clear all clipboard history? This cannot be undone.")
+        }
         .onKeyPress(.escape) {
             handleEscape()
             return .handled
@@ -117,7 +144,8 @@ struct PopupView: View {
         EntryRowView(
             entry: entry,
             isHighlighted: highlightedIndex == index,
-            onTap: { onPaste(entry) }
+            onTap: { onPaste(entry) },
+            onCopy: { viewModel.copyToClipboard(entry: entry) }
         )
     }
 
