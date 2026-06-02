@@ -60,43 +60,43 @@ This implementation plan covers the macOS clipboard history manager built with S
   - [x] 6.9 Implement `stopMonitoring()` to invalidate the timer
 
 - [ ] 7. ShortcutListener Implementation
-  - [~] 7.1 Implement `ShortcutListener` class with Carbon `RegisterEventHotKey` integration
-  - [~] 7.2 Implement `register(shortcut:)` that registers the global hotkey and stores the `EventHotKeyRef`
-  - [~] 7.3 Implement `unregister()` to call `UnregisterEventHotKey`
-  - [~] 7.4 Implement `updateShortcut(_:)` that unregisters old, validates new, and registers new shortcut
-  - [~] 7.5 Implement `validate(_:)` to check at least one modifier plus non-modifier key requirement
-  - [~] 7.6 Implement conflict handling: display notification on registration failure, revert to previous shortcut
+  - [x] 7.1 Implement `ShortcutListener` class with Carbon `RegisterEventHotKey` integration
+  - [x] 7.2 Implement `register(shortcut:)` that registers the global hotkey and stores the `EventHotKeyRef`
+  - [x] 7.3 Implement `unregister()` to call `UnregisterEventHotKey`
+  - [x] 7.4 Implement `updateShortcut(_:)` that unregisters old, validates new, and registers new shortcut
+  - [x] 7.5 Implement `validate(_:)` to check at least one modifier plus non-modifier key requirement
+  - [x] 7.6 Implement conflict handling: display notification on registration failure, revert to previous shortcut
 
-- [ ] 8. PasteEngine Implementation
-  - [~] 8.1 Implement `PasteEngine` class with `placeOnPasteboard(_:)` to write content to `NSPasteboard.general`
-  - [~] 8.2 Implement `simulatePaste()` using `CGEvent` API to synthesize Cmd+V keystroke
-  - [~] 8.3 Implement `paste(entry:targetApp:)` orchestration: place on pasteboard then simulate paste
-  - [~] 8.4 Implement `isAppAvailable(_:)` check to skip Cmd+V simulation if target app is terminated
+- [x] 8. PasteEngine Implementation
+  - [x] 8.1 Implement `PasteEngine` class with `placeOnPasteboard(_:)` to write content to `NSPasteboard.general`
+  - [x] 8.2 Implement `simulatePaste()` using `CGEvent` API to synthesize Cmd+V keystroke
+  - [x] 8.3 Implement `paste(entry:targetApp:)` orchestration: place on pasteboard then simulate paste
+  - [x] 8.4 Implement `isAppAvailable(_:)` check to skip Cmd+V simulation if target app is terminated
 
-- [ ] 9. PopupPanel and UI Layer
-  - [~] 9.1 Implement `PopupPanel` as `NSPanel` subclass with floating non-activating panel behavior
-  - [~] 9.2 Implement `showNearCursor()` positioning logic: near cursor if within screen bounds, centered otherwise
-  - [~] 9.3 Implement `dismiss()` with focus return to `previousApp`
-  - [~] 9.4 Implement focus-loss detection to auto-dismiss the panel
-  - [~] 9.5 Implement `PopupView` (SwiftUI) as the root view hosted in the panel
-  - [~] 9.6 Implement `SearchView` with text field that receives focus on panel activation
-  - [~] 9.7 Implement `EntryRowView` showing text preview, image thumbnail, content type icon, and relative timestamp
-  - [~] 9.8 Implement keyboard navigation: Up/Down arrow keys to move highlight, stopping at bounds
-  - [~] 9.9 Implement Enter key to paste highlighted entry, no-op if nothing highlighted
-  - [~] 9.10 Implement Escape key behavior: clear search if text present, dismiss panel if search is empty
-  - [~] 9.11 Implement empty-state message when no entries exist
-  - [~] 9.12 Implement no-results message when search query matches nothing
+- [x] 9. PopupPanel and UI Layer
+  - [x] 9.1 Implement `PopupPanel` as `NSPanel` subclass with floating non-activating panel behavior
+  - [x] 9.2 Implement `showNearCursor()` positioning logic: near cursor if within screen bounds, centered otherwise
+  - [x] 9.3 Implement `dismiss()` with focus return to `previousApp`
+  - [x] 9.4 Implement focus-loss detection to auto-dismiss the panel
+  - [x] 9.5 Implement `PopupView` (SwiftUI) as the root view hosted in the panel
+  - [x] 9.6 Implement `SearchView` with text field that receives focus on panel activation
+  - [x] 9.7 Implement `EntryRowView` showing text preview, image thumbnail, content type icon, and relative timestamp
+  - [x] 9.8 Implement keyboard navigation: Up/Down arrow keys to move highlight, stopping at bounds
+  - [x] 9.9 Implement Enter key to paste highlighted entry, no-op if nothing highlighted
+  - [x] 9.10 Implement Escape key behavior: clear search if text present, dismiss panel if search is empty
+  - [x] 9.11 Implement empty-state message when no entries exist
+  - [x] 9.12 Implement no-results message when search query matches nothing
 
-- [ ] 10. Property Tests for UI Logic
-  - [~] 10.1 Write property test for panel positioning (Property 12): generate random cursor positions and screen bounds, verify placement rules **Validates: Requirements 4.5**
-  - [~] 10.2 Write property test for arrow key navigation bounds (Property 15): generate random list sizes and positions, verify bounds enforcement **Validates: Requirements 5.4**
+- [x] 10. Property Tests for UI Logic
+  - [x] 10.1 Write property test for panel positioning (Property 12): generate random cursor positions and screen bounds, verify placement rules **Validates: Requirements 4.5**
+  - [x] 10.2 Write property test for arrow key navigation bounds (Property 15): generate random list sizes and positions, verify bounds enforcement **Validates: Requirements 5.4**
 
-- [ ] 11. MenuBarController and Application Lifecycle
-  - [~] 11.1 Implement `MenuBarController` with `NSStatusItem` setup (icon, menu with Settings, Launch at Login toggle, Quit)
-  - [~] 11.2 Implement `AppDelegate` wiring: initialize ClipboardMonitor, HistoryStore, ShortcutListener, MenuBarController on app launch
-  - [~] 11.3 Implement `applicationWillTerminate` handler: call `persistImmediately()` with 2-second timeout
-  - [~] 11.4 Implement Launch at Login registration/deregistration using `SMAppService` (macOS 13+)
-  - [~] 11.5 Implement ShortcutListener toggle behavior: show panel if hidden, hide if visible
+- [x] 11. MenuBarController and Application Lifecycle
+  - [x] 11.1 Implement `MenuBarController` with `NSStatusItem` setup (icon, menu with Settings, Launch at Login toggle, Quit)
+  - [x] 11.2 Implement `AppDelegate` wiring: initialize ClipboardMonitor, HistoryStore, ShortcutListener, MenuBarController on app launch
+  - [x] 11.3 Implement `applicationWillTerminate` handler: call `persistImmediately()` with 2-second timeout
+  - [x] 11.4 Implement Launch at Login registration/deregistration using `SMAppService` (macOS 13+)
+  - [x] 11.5 Implement ShortcutListener toggle behavior: show panel if hidden, hide if visible
 
 - [ ] 12. Unit Tests for Core Behavior
   - [~] 12.1 Write unit tests for pasteboard text/image extraction with known content types
